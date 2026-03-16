@@ -12,7 +12,7 @@ Air-PhyM is a novel physics-informed multimodal deep learning framework for air 
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/Air-PhyM.git
+git clone https://github.com/0fish1/Air-PhyM.git
 cd Air-PhyM
 
 # Create conda environment
