@@ -1,4 +1,4 @@
-# Air-PhyM: Physics-informed Multimodal Air Quality Estimation
+# **Air-PhyM: A Physics-Informed Multimodal Fusion Framework with Contrastive Alignment for PM2.5 Estimation**  
 
 [![Python](https://img.shields.io/badge/Python-3.8%2B-blue.svg)](https://www.python.org/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.0%2B-orange.svg)](https://pytorch.org/)
@@ -6,7 +6,7 @@
 
 ### Overview
 
-Air-PhyM is a novel physics-informed multimodal deep learning framework for air quality prediction. The model effectively integrates physical mechanisms with data-driven approaches, combining weather imagery, pollutant monitoring data, and meteorological information to achieve accurate air quality estimation.
+Air-PhyM is a novel physics-informed multimodal deep learning framework for air quality estimation. The model effectively integrates physical mechanisms with data-driven approaches, combining weather imagery, pollutant monitoring data, and meteorological information to achieve accurate air quality estimation.
 
 ### Installation
 
