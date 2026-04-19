@@ -28,7 +28,7 @@ STATION_COORDS = {
 BASE_CONFIG = build_base_config(
     project_root=PROJECT_ROOT,
     data_subdir="bj",
-    pkl_file="/home/yy/pollution_mul/code/data_deal/data/bj/samples_48h.pkl",
+    pkl_file="/data/bj/samples_48h.pkl",
     image_root_candidates=[
         "data/bj_img",
         "data/images/bj",
