@@ -1,63 +1,40 @@
-# **Air-PhyM: A Physics-Informed Multimodal Fusion Framework with Contrastive Alignment for PM2.5 Estimation**  
+# Air-PhyM: A Physically Inspired Multimodal Fusion Framework with Contrastive Alignment for PM2.5 Estimation
 
-[![Python](https://img.shields.io/badge/Python-3.8%2B-blue.svg)](https://www.python.org/)
-[![PyTorch](https://img.shields.io/badge/PyTorch-2.0%2B-orange.svg)](https://pytorch.org/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+Official code for the paper *"Air-PhyM: A Physically Inspired Multimodal Fusion Framework with Contrastive Alignment for PM2.5 Estimation"*.
 
-### Overview
 
-Air-PhyM is a novel physics-informed multimodal deep learning framework for air quality estimation. The model effectively integrates physical mechanisms with data-driven approaches, combining weather imagery, pollutant monitoring data, and meteorological information to achieve accurate air quality estimation.
+## Overview
 
-### Installation
+Air-PhyM is a novel physically inspired multimodal deep learning framework for air quality estimation. The model effectively integrates physical mechanisms with data-driven approaches, combining weather imagery, pollutant monitoring data, and meteorological information to achieve accurate air quality estimation.
 
-```bash
-# Clone the repository
-git clone https://github.com/0fish1/Air-PhyM.git
-cd Air-PhyM
 
-# Create conda environment
-conda create -n airphym python=3.9
-conda activate airphym
-
-# Install dependencies
-pip install torch torchvision
-pip install numpy pandas scikit-learn
-pip install einops mmengine
-pip install pillow matplotlib
-pip install optuna lightgbm xgboost
-pip install fastdtw scipy
-```
-
-### Quick Start
+## Installation
 
 ```bash
-# Run the full model
-cd code/latest_shGAT2mobility
-python run_experiment.py --exp full_model
-
-# Run ablation studies
-python run_experiment.py --exp image_only
-python run_experiment.py --exp pollution_only
-python run_experiment.py --exp no_dynamic_edge
+pip install -r requirements.txt
 ```
 
-### Configuration
+## Training
 
-Key parameters in `configs.py`:
+```bash
+cd code/Beijing    # or code/Shanghai
 
-| Parameter         | Description                   | Default            |
-| ----------------- | ----------------------------- | ------------------ |
-| `use_image`       | Enable image branch           | True               |
-| `use_pollution`   | Enable pollution branch       | True               |
-| `fusion_type`     | Fusion method                 | "cross\_attention" |
-| `dynamic_edge`    | Use dynamic edge construction | True               |
-| `history_hours`   | Historical time window        | 24                 |
-| `use_contrastive` | Enable contrastive learning   | True               |
-| `batch_size`      | Training batch size           | 16                 |
-| `num_epochs`      | Number of epochs              | 150                |
-| `learning_rate`   | Learning rate                 | 1e-3               |
+python run_experiment.py --exp PM_SCL          # Full model
+```
 
-### Dataset Format
+## Project Structure
+
+```
+code/
+├── common/          # Core model modules
+├── Beijing/         # Beijing config (12 neighbor stations)
+└── Shanghai/        # Shanghai config (9 neighbor stations)
+data/
+├── bj/              # Beijing: samples_48h.pkl + raw CSVs
+├── sh/              # Shanghai: samples_48h.pkl + raw CSVs
+```
+
+## Dataset Format
 
 The dataset should be stored in pickle format (`samples_48h.pkl`) with the following structure:
 
@@ -72,6 +49,6 @@ The dataset should be stored in pickle format (`samples_48h.pkl`) with the follo
 }
 ```
 
-<br />
+## License
 
-This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+MIT

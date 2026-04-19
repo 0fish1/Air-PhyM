@@ -14,7 +14,6 @@ class SCSA(BaseModule):
             dim: int,
             head_num: int,
             window_size: int = 7,
-            # group_kernel_sizes: t.List[int] = [3, 5, 7, 9],
             group_kernel_sizes: t.List[int] = [7, 11, 15, 21],
             qkv_bias: bool = False,
             fuse_bn: bool = False,
@@ -63,7 +62,6 @@ class SCSA(BaseModule):
         else:
             if down_sample_mode == 'recombination':
                 self.down_func = self.space_to_chans
-                # dimensionality reduction
                 self.conv_d = nn.Conv2d(in_channels=dim * window_size ** 2, out_channels=dim, kernel_size=1, bias=False)
             elif down_sample_mode == 'avg_pool':
                 self.down_func = nn.AvgPool2d(kernel_size=(window_size, window_size), stride=window_size)
@@ -71,15 +69,9 @@ class SCSA(BaseModule):
                 self.down_func = nn.MaxPool2d(kernel_size=(window_size, window_size), stride=window_size)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        """
-        The dim of x is (B, C, H, W)
-        """
-        # Spatial attention priority calculation
         b, c, h_, w_ = x.size()
-        # (B, C, H)
         x_h = x.mean(dim=3)
         l_x_h, g_x_h_s, g_x_h_m, g_x_h_l = torch.split(x_h, self.group_chans, dim=1)
-        # (B, C, W)
         x_w = x.mean(dim=2)
         l_x_w, g_x_w_s, g_x_w_m, g_x_w_l = torch.split(x_w, self.group_chans, dim=1)
 
@@ -101,18 +93,14 @@ class SCSA(BaseModule):
 
         x = x * x_h_attn * x_w_attn
 
-        # Channel attention based on self attention
-        # reduce calculations
         y = self.down_func(x)
         y = self.conv_d(y)
         _, _, h_, w_ = y.size()
 
-        # normalization first, then reshape -> (B, H, W, C) -> (B, C, H * W) and generate q, k and v
         y = self.norm(y)
         q = self.q(y)
         k = self.k(y)
         v = self.v(y)
-        # (B, C, H, W) -> (B, head_num, head_dim, N)
         q = rearrange(q, 'b (head_num head_dim) h w -> b head_num head_dim (h w)', head_num=int(self.head_num),
                       head_dim=int(self.head_dim))
         k = rearrange(k, 'b (head_num head_dim) h w -> b head_num head_dim (h w)', head_num=int(self.head_num),
@@ -120,14 +108,10 @@ class SCSA(BaseModule):
         v = rearrange(v, 'b (head_num head_dim) h w -> b head_num head_dim (h w)', head_num=int(self.head_num),
                       head_dim=int(self.head_dim))
 
-        # (B, head_num, head_dim, head_dim)
         attn = q @ k.transpose(-2, -1) * self.scaler
         attn = self.attn_drop(attn.softmax(dim=-1))
-        # (B, head_num, head_dim, N)
         attn = attn @ v
-        # (B, C, H_, W_)
         attn = rearrange(attn, 'b head_num head_dim (h w) -> b (head_num head_dim) h w', h=int(h_), w=int(w_))
-        # (B, C, 1, 1)
         attn = attn.mean((2, 3), keepdim=True)
         attn = self.ca_gate(attn)
         return attn * x
